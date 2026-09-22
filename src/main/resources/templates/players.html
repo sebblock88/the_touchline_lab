@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+    <div th:each="player : ${players}"
+         class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-sky-500 transition-all duration-200 shadow-lg cursor-pointer">
+
+        <!-- Header: Player Name & Team -->
+        <div class="flex justify-between items-start mb-3">
+            <div>
+                <h3 class="text-lg font-bold text-white leading-tight"
+                    th:text="${player.secondName.toUpperCase()}">HAALAND</h3>
+                <p class="text-xs text-slate-400 font-medium"
+                   th:text="${player.positionId + ' • ' + player.team}">FWD • Man City</p>
+            </div>
+            <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 text-xs font-semibold px-2 py-1 rounded-md"
+                  th:text="'£' + ${player.getCostInMillions()} + 'm'">£15.0m</span>
+        </div>
+
+        <!-- Key Metrics Grid -->
+        <div class="grid grid-cols-2 gap-2 my-4 bg-slate-950 p-3 rounded-lg border border-slate-800/60">
+            <div>
+                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Points</span>
+                <span class="text-base font-extrabold text-white" th:text="${player.totalPoints}">217</span>
+            </div>
+            <div>
+                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">PPM Value</span>
+                <span class="text-base font-extrabold text-sky-400" th:text="${player.pointsPerMillion()}">14.4</span>
+            </div>
+            <div>
+                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Defcon / 90</span>
+                <span class="text-base font-extrabold text-emerald-400" th:text="${player.defCon}">12.4</span>
+            </div>
+            <div>
+                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Bonus Pts</span>
+                <span class="text-base font-extrabold text-amber-400" th:text="${player.bonus}">29</span>
+            </div>
+        </div>
+
+        <!-- Card Footer / Watchlist Trigger -->
+        <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-800">
+            <span class="text-slate-400" th:text="${player.gamesWithBonus} + ' GWs with Bonus'">12 GWs with Bonus</span>
+            <a th:href="@{/live-fpl/{id}(id=${player.id})}" class="text-sky-400 hover:text-sky-300 font-semibold">View Stats &rarr;</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
