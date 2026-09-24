@@ -1,54 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/output.css}">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>theTouchline - Players</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-    <div th:each="player : ${players}"
-         class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-sky-500 transition-all duration-200 shadow-lg cursor-pointer">
+<body class="bg-slate-950 min-h-screen text-slate-100 flex flex-col">
+<nav th:fragment="landing_page_nav" class="bg-white border-b border-gray-100 shadow-sm">
 
-        <!-- Header: Player Name & Team -->
-        <div class="flex justify-between items-start mb-3">
-            <div>
-                <h3 class="text-lg font-bold text-white leading-tight"
-                    th:text="${player.secondName.toUpperCase()}">HAALAND</h3>
-                <p class="text-xs text-slate-400 font-medium"
-                   th:text="${player.positionId + ' • ' + player.team}">FWD • Man City</p>
-            </div>
-            <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 text-xs font-semibold px-2 py-1 rounded-md"
-                  th:text="'£' + ${player.getCostInMillions()} + 'm'">£15.0m</span>
+<main class="flex flex-col items-center justify-start pt-8 pb-12 px-4 flex-grow max-w-6xl mx-auto w-full">
+
+    <!-- Header & Sync Form -->
+    <div class="flex flex-col sm:flex-row justify-between items-center w-full mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white">Player Statistics</h1>
+            <p class="text-xs text-slate-400 mt-1">FPL Dashboard Data</p>
         </div>
 
-        <!-- Key Metrics Grid -->
-        <div class="grid grid-cols-2 gap-2 my-4 bg-slate-950 p-3 rounded-lg border border-slate-800/60">
-            <div>
-                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Points</span>
-                <span class="text-base font-extrabold text-white" th:text="${player.totalPoints}">217</span>
-            </div>
-            <div>
-                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">PPM Value</span>
-                <span class="text-base font-extrabold text-sky-400" th:text="${player.pointsPerMillion()}">14.4</span>
-            </div>
-            <div>
-                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Defcon / 90</span>
-                <span class="text-base font-extrabold text-emerald-400" th:text="${player.defCon}">12.4</span>
-            </div>
-            <div>
-                <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Bonus Pts</span>
-                <span class="text-base font-extrabold text-amber-400" th:text="${player.bonus}">29</span>
-            </div>
-        </div>
+        <form th:action="@{/players/sync}" method="post">
+            <button type="submit"
+                    class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-all shadow-md flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-rotate"></i>
+                Sync Latest Player Data
+            </button>
+        </form>
+    </div>
 
-        <!-- Card Footer / Watchlist Trigger -->
-        <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-800">
-            <span class="text-slate-400" th:text="${player.gamesWithBonus} + ' GWs with Bonus'">12 GWs with Bonus</span>
-            <a th:href="@{/live-fpl/{id}(id=${player.id})}" class="text-sky-400 hover:text-sky-300 font-semibold">View Stats &rarr;</a>
+    <!-- Debug Alert Box if list is empty -->
+    <div th:if="${players == null or players.empty}" class="w-full p-4 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-xl text-center mb-6">
+        <p class="font-bold text-sm">No player data in model key '${players}'</p>
+        <p class="text-xs mt-1 text-slate-400">Click the sync button above to populate PostgreSQL.</p>
+    </div>
+
+    <!-- Safe Cards Grid -->
+    <div th:if="${players != null and !players.empty}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+        <div th:each="player : ${players}"
+             class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-sky-500 transition-all duration-200 shadow-lg flex flex-col justify-between">
+
+            <div>
+                <!-- Header: Name & Team (Null-Safe) -->
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-white leading-tight"
+                            th:text="${player.webName != null ? player.webName.toUpperCase() : 'UNKNOWN'}">HAALAND</h3>
+                        <p class="text-xs text-slate-400 font-medium mt-0.5"
+                           th:text="${(player.positionId != null ? player.positionId : 'POS') + ' • ' + (player.team != null ? player.team : 'TEAM')}">FWD • Man City</p>
+                    </div>
+                    <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 text-xs font-semibold px-2 py-1 rounded-md"
+                          th:text="'£' + ${player.getCostInMillions() != null ? player.getCostInMillions() : 0.0} + 'm'">£15.0m</span>
+                </div>
+
+                <!-- Metrics Grid (Null-Safe) -->
+                <div class="grid grid-cols-2 gap-2 my-4 bg-slate-950 p-3 rounded-lg border border-slate-800/60">
+                    <div>
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Total Points</span>
+                        <span class="text-base font-extrabold text-white" th:text="${player.totalPoints != null ? player.totalPoints : 0}">217</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">PPM Value</span>
+                        <span class="text-base font-extrabold text-sky-400" th:text="${player.pointsPerMillion() != null ? player.pointsPerMillion() : 0.0}">14.4</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">DefCon / 90</span>
+                        <span class="text-base font-extrabold text-emerald-400" th:text="${player.defCon != null ? player.defCon : 0.0}">12.4</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-500 font-bold">Bonus Pts</span>
+                        <span class="text-base font-extrabold text-amber-400" th:text="${player.bonus != null ? player.bonus : 0}">29</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-between items-center text-xs pt-3 border-t border-slate-800">
+                <span class="text-slate-400" th:text="${(player.bonus != null ? player.bonus : 0) + ' Bonus Pts'}">0 Bonus Pts</span>
+                <a th:href="@{/live-fpl/{id}(id=${player.id})}" class="text-sky-400 hover:text-sky-300 font-semibold">View Stats &rarr;</a>
+            </div>
+
         </div>
     </div>
-</div>
+
+</main>
 
 </body>
 </html>

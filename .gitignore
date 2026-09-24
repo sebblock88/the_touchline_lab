@@ -43,3 +43,14 @@ tailwindcss.exe
 
 ### Tailwind generated build output ###
 src/main/resources/static/css/output.css
+
+
+src/main/resources/application-local.properties
+
+# Node & Build Dependencies
+node_modules/
+npm-debug.log
+.DS_Store
+
+# Tailwind Output cache / temp files
+.clinic/

@@ -1,0 +1,29 @@
+<nav th:fragment="landing_page_nav" class="bg-white border-b border-gray-100 shadow-sm">
+    <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+
+            <div class="">
+                <a th:href="@{/players}" class="flex-shrink-0 flex items-center italic text-2xl font-extrabold tracking-tight text-emerald-600 hover:text-emerald-700 flex items-center gap-2">
+                    <span>theTouchline</span>
+                </a>
+            </div>
+
+            <div>
+                <span class="text-slate-300">|</span>
+                <a th:href="@{/sign-up}" class="text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors">
+                    Sign Up
+                </a>
+            </div>
+
+            <div>
+                <span class="text-slate-300">|</span>
+                <a th:href="@{/login}" class="text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors">
+                    Login
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+
