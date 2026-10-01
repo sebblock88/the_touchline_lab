@@ -18,6 +18,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     Optional<Player> findByFplId(Long fplId);
 
+
     @Transactional
     void deleteByIsCurrentTrue();
 }

@@ -7,10 +7,13 @@ import com.thetouchlinelab.fpl.repository.PlayerRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FplApiService {
@@ -27,6 +30,7 @@ public class FplApiService {
         this.objectMapper = new ObjectMapper();
     }
 
+    @Transactional
     @EventListener(ApplicationReadyEvent.class)
     public void syncLiveFplData() {
         try {
@@ -38,22 +42,59 @@ public class FplApiService {
 
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
             JsonNode elementsNode = rootNode.get("elements");
+            JsonNode teamsNode = rootNode.get("teams");
+            JsonNode positionNode = rootNode.get("element_types");
+
+            Map<Integer, String> teams = new HashMap<>();
+
+            Map<Integer, String> positions = new HashMap<>();
+
+            Map<Long, Player> playersByFplId = new HashMap<>();
 
             List<Player> livePlayers = new ArrayList<>();
 
+            List<Player> existingPlayers = playerRepository.findAll();
+
+            for (Player existingPlayer : existingPlayers) {
+                playersByFplId.put(existingPlayer.getFplId(), existingPlayer);
+            }
+
+            for (JsonNode node : teamsNode ) {
+                Integer teamId = node.get("id").asInt();
+                String teamName = node.get("name").asText();
+
+                teams.put(teamId, teamName);
+            }
+
+            for (JsonNode node : positionNode ) {
+                Integer posId = node.get("id").asInt();
+                String posName = node.get("singular_name").asText();
+
+                positions.put(posId, posName);
+            }
+
+
+
             for (JsonNode node : elementsNode) {
+
+
                 Long fplId = node.get("id").asLong();
 
-                Player player = playerRepository.findByFplId(fplId)
-                        .orElseGet(Player::new);
+                Player player = playersByFplId.get(fplId);
+
+                if (player == null) {
+                    player = new Player();
+                }
+
+                int teamId = node.get("team").asInt();
+                int posId = node.get("element_type").asInt();
 
                 player.setFplId(fplId);
                 player.setFirstName(node.get("first_name").asText());
                 player.setSecondName(node.get("second_name").asText());
                 player.setWebName(node.get("web_name").asText());
-                player.setTeam(mapTeamIdToName(node.get("team").asInt()));
-                player.setPositionId(mapPositionIdToName(node.get("element_type").asInt()));
-
+                player.setPositionId(positions.get(posId));
+                player.setTeam(teams.get(teamId));
                 player.setNowCost(node.get("now_cost").asInt());
                 player.setTotalPoints(node.get("total_points").asInt());
                 player.setBonus(node.get("bonus").asInt());
@@ -79,47 +120,20 @@ public class FplApiService {
                 livePlayers.add(player);
             }
 
+
+
+
             playerRepository.saveAll(livePlayers);
             System.out.println("Successfully imported " + livePlayers.size() + " live FPL players!");
+
+            System.out.println(teams);
+
+            System.out.println(positions);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private String mapPositionIdToName(int posId) {
-        return switch (posId) {
-            case 1 -> "Goalkeeper";
-            case 2 -> "Defender";
-            case 3 -> "Midfielder";
-            case 4 -> "Forward";
-            default -> "Unknown";
-        };
-    }
-
-    private String mapTeamIdToName(int teamId) {
-        return switch (teamId) {
-            case 1 -> "Arsenal";
-            case 2 -> "Aston Villa";
-            case 3 -> "Bournemouth";
-            case 4 -> "Brentford";
-            case 5 -> "Brighton & Hove Albion";
-            case 6 -> "Chelsea";
-            case 7 -> "Coventry City";
-            case 8 -> "Crystal Palace";
-            case 9 -> "Everton";
-            case 10 -> "Fulham";
-            case 11 -> "Hull City";
-            case 12 -> "Ipswich Town";
-            case 13 -> "Leeds United";
-            case 14 -> "Liverpool";
-            case 15 -> "Manchester City";
-            case 16 -> "Manchester United";
-            case 17 -> "Newcastle United";
-            case 18 -> "Nottingham Forest";
-            case 19 -> "Sunderland";
-            case 20 -> "Tottenham Hotspur";
-            default -> "Team " + teamId;
-        };
-    }
 }
+
+
