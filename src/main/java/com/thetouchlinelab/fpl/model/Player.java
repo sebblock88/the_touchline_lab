@@ -56,16 +56,17 @@ public class Player {
     private Integer gamesHitDefCon;
     private Integer gamesWithBonus;
 
+
+    public Player(int i, String test, String name, String testName, String arsenal, String forward, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, double v, double v1, double v2, String s, boolean b, int i12, int i13) {
+    }
+
     public Double getCostInMillions() {
         return nowCost != null ? nowCost / 10.0 : 0.0;
     }
 
-    public double pointsPerMillion() {
+    public Double pointsPerMillion() {
         if (nowCost == null || nowCost == 0 || totalPoints == null) return 0.0;
         double ppm = (double) totalPoints / getCostInMillions();
         return Math.round(ppm * 100.0) / 100.0;
     }
-
-
-
 }
