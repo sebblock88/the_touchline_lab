@@ -14,4 +14,6 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     List<Player> findByWebNameIgnoreCaseOrderBySeasonAsc(String webName);
 
+    List<Player> findAllPlayers(Player player);
+
 }

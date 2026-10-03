@@ -11,6 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @Table(name = "players")
+@ToString(onlyExplicitlyIncluded = true)
 
 public class Player {
 
@@ -25,11 +26,18 @@ public class Player {
 
     private String firstName;
     private String secondName;
+
+    @ToString.Include
     private String webName;
     private String team;
+
+    @ToString.Include
     private String positionId;
 
+    @ToString.Include
     private Integer nowCost;
+
+    @ToString.Include
     private Integer totalPoints;
     private Integer bonus;
     private Integer goalsScored;
@@ -64,6 +72,7 @@ public class Player {
         return nowCost != null ? nowCost / 10.0 : 0.0;
     }
 
+    @ToString.Include
     public Double pointsPerMillion() {
         if (nowCost == null || nowCost == 0 || totalPoints == null) return 0.0;
         double ppm = (double) totalPoints / getCostInMillions();

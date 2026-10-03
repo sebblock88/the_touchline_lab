@@ -1,6 +1,5 @@
-package com.thetouchlinelab.fpl;
+package com.thetouchlinelab.fpl.model;
 
-import com.thetouchlinelab.fpl.model.Player;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +53,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void pointsperMillion_numberCost_zeroPoints_returnsZero() {
+    public void pointsPerMillion_numberCost_zeroPoints_returnsZero() {
         Player player = Player.builder()
                 .nowCost(150)
                 .totalPoints(0)
