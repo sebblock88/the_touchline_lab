@@ -126,10 +126,6 @@ public class FplApiService {
             playerRepository.saveAll(livePlayers);
             System.out.println("Successfully imported " + livePlayers.size() + " live FPL players!");
 
-//            System.out.println(teams);
-//
-//            System.out.println(positions);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

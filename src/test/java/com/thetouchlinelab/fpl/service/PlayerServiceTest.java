@@ -1,7 +1,9 @@
 package com.thetouchlinelab.fpl.service;
 
 import com.thetouchlinelab.fpl.model.Player;
+import com.thetouchlinelab.service.PlayerFilter;
 import com.thetouchlinelab.service.PlayerService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,7 +11,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.filter;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerServiceTest {
 //    good value for each position should be take price into consideration but only for their position
@@ -24,6 +28,30 @@ public class PlayerServiceTest {
 
 //    Forwards range from £4.6 - £9.1 with Haaland being an outlier at £15.6 and the lower values barely getting minutes
 
+    private PlayerService playerService;
+    private List<Player> playerList;
+    private Player gabriel;
+    private Player bogle;
+    private Player hall;
+    private Player haaland;
+    private Player isak;
+    private Player kostoulas;
+
+    @BeforeEach
+    void setup() {
+        playerService = new PlayerService();
+        playerList = new ArrayList<>();
+
+        // Defenders
+        gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
+        bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
+        hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
+        // Forwards
+        haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
+        isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
+        kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
+
+    }
 
     @Test
     public void valueRating_goalkeepers_showsHighValueKeeper() {
@@ -45,10 +73,42 @@ public class PlayerServiceTest {
         assertEquals(tzolakis, ranked.get(0));
     }
 
+
     @Test
     public void valueRating_positionRelative_showsHighValuePlayersGrouped() {
 
         PlayerService playerService = new PlayerService();
+
+        List<Player> playerList = new ArrayList<>();
+
+//        Player gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
+//        Player bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
+//        Player hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
+//
+//        Player haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
+//        Player isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
+//        Player kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
+
+        playerList.add(gabriel);
+        playerList.add(bogle);
+        playerList.add(hall);
+        playerList.add(haaland);
+        playerList.add(isak);
+        playerList.add(kostoulas);
+
+        Map<String, List<Player>> result = playerService.rankValueByPosition(playerList);
+
+        assertEquals(bogle, result.get("Defender").getFirst());
+
+        assertEquals(kostoulas, result.get("Forward").getFirst());
+
+    }
+
+    @Test
+    public void filterPlayers_NullMins_NullMaxPrice_ReturnsAllPlayers() {
+        PlayerService playerService = new PlayerService();
+
+        PlayerFilter playerFilter = new PlayerFilter(null, null);
 
         List<Player> playerList = new ArrayList<>();
 
@@ -67,13 +127,44 @@ public class PlayerServiceTest {
         playerList.add(isak);
         playerList.add(kostoulas);
 
-        Map<String, List<Player>> result = playerService.rankValueByPosition(playerList);
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
 
-        assertEquals(bogle, result.get("Defender").getFirst());
-
-        assertEquals(kostoulas, result.get("Forward").getFirst());
+        assertEquals(6, filteredPlayers.size());
+        assertTrue(filteredPlayers.containsAll(playerList));
 
     }
+
+    @Test
+    public void filterPlayers_400Mins_NullMaxPrice_ReturnsFourPlayers() {
+        PlayerService playerService = new PlayerService();
+
+        PlayerFilter playerFilter = new PlayerFilter(400, null);
+
+        List<Player> playerList = new ArrayList<>();
+
+        Player gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
+        Player bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
+        Player hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
+
+        Player haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
+        Player isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
+        Player kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
+
+        playerList.add(gabriel);
+        playerList.add(bogle);
+        playerList.add(hall);
+        playerList.add(haaland);
+        playerList.add(isak);
+        playerList.add(kostoulas);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+        assertEquals(4, filteredPlayers.size());
+        assertFalse(filteredPlayers.contains(bogle));
+        assertFalse(filteredPlayers.contains(kostoulas));
+
+    }
+
 
 
 }
