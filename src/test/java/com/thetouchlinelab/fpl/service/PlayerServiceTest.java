@@ -7,12 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.filter;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerServiceTest {
@@ -51,50 +48,36 @@ public class PlayerServiceTest {
         isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
         kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
 
-    }
-
-    @Test
-    public void valueRating_goalkeepers_showsHighValueKeeper() {
-
-        PlayerService playerService = new PlayerService();
-
-        List<Player> playerList = new ArrayList<>();
-
-        Player raya = Player.builder().webName("Raya").nowCost(61).totalPoints(30).build();
-        Player pickford = Player.builder().webName("Pickford").nowCost(55).totalPoints(25).build();
-        Player tzolakis = Player.builder().webName("Tzolakis").nowCost(47).totalPoints(34).build();
-
-        playerList.add(raya);
-        playerList.add(pickford);
-        playerList.add(tzolakis);
-
-        List<Player> ranked = playerService.rankByValue(playerList);
-
-        assertEquals(tzolakis, ranked.get(0));
-    }
-
-
-    @Test
-    public void valueRating_positionRelative_showsHighValuePlayersGrouped() {
-
-        PlayerService playerService = new PlayerService();
-
-        List<Player> playerList = new ArrayList<>();
-
-//        Player gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
-//        Player bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
-//        Player hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
-//
-//        Player haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
-//        Player isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
-//        Player kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
-
         playerList.add(gabriel);
         playerList.add(bogle);
         playerList.add(hall);
         playerList.add(haaland);
         playerList.add(isak);
         playerList.add(kostoulas);
+
+    }
+
+    @Test
+    public void valueRating_goalkeepers_showsHighValueKeeper() {
+
+        List<Player> keepers = new ArrayList<>();
+
+        Player raya = Player.builder().webName("Raya").nowCost(61).totalPoints(30).build();
+        Player pickford = Player.builder().webName("Pickford").nowCost(55).totalPoints(25).build();
+        Player tzolakis = Player.builder().webName("Tzolakis").nowCost(47).totalPoints(34).build();
+
+        keepers.add(raya);
+        keepers.add(pickford);
+        keepers.add(tzolakis);
+
+        List<Player> ranked = playerService.rankByValue(keepers);
+
+        assertEquals(tzolakis, ranked.getFirst());
+    }
+
+
+    @Test
+    public void valueRating_positionRelative_showsHighValuePlayersGrouped() {
 
         Map<String, List<Player>> result = playerService.rankValueByPosition(playerList);
 
@@ -106,26 +89,8 @@ public class PlayerServiceTest {
 
     @Test
     public void filterPlayers_NullMins_NullMaxPrice_ReturnsAllPlayers() {
-        PlayerService playerService = new PlayerService();
 
         PlayerFilter playerFilter = new PlayerFilter(null, null);
-
-        List<Player> playerList = new ArrayList<>();
-
-        Player gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
-        Player bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
-        Player hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
-
-        Player haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
-        Player isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
-        Player kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
-
-        playerList.add(gabriel);
-        playerList.add(bogle);
-        playerList.add(hall);
-        playerList.add(haaland);
-        playerList.add(isak);
-        playerList.add(kostoulas);
 
         List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
 
@@ -136,26 +101,8 @@ public class PlayerServiceTest {
 
     @Test
     public void filterPlayers_400Mins_NullMaxPrice_ReturnsFourPlayers() {
-        PlayerService playerService = new PlayerService();
 
         PlayerFilter playerFilter = new PlayerFilter(400, null);
-
-        List<Player> playerList = new ArrayList<>();
-
-        Player gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
-        Player bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
-        Player hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
-
-        Player haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
-        Player isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
-        Player kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
-
-        playerList.add(gabriel);
-        playerList.add(bogle);
-        playerList.add(hall);
-        playerList.add(haaland);
-        playerList.add(isak);
-        playerList.add(kostoulas);
 
         List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
 
@@ -165,6 +112,69 @@ public class PlayerServiceTest {
 
     }
 
+    @Test
+    public void filterPlayers_400Mins_60MaxPrice_ReturnsOnePlayer() {
+
+        PlayerFilter playerFilter = new PlayerFilter(400, 6.0);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+        assertEquals(1, filteredPlayers.size());
+        assertTrue(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(isak));
+
+    }
+
+    @Test
+    public void nullMinsNewPlayer_400minMins_nullMaxPrice_ExcludesNewPlayer() {
+
+        PlayerFilter playerFilter = new PlayerFilter(400, null);
+
+        Player newPlayer = Player.builder().webName("New Player").positionId("Forward").nowCost(56).totalPoints(28).build();
+
+        playerList.add(newPlayer);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+        // hall is a control test
+        assertTrue(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(newPlayer));
+
+    }
+
+    @Test
+    public void zeroMinsNewPlayer_400minMins_nullMaxPrice_ExcludesNewPlayer() {
+
+        PlayerFilter playerFilter = new PlayerFilter(400, null);
+
+        Player newPlayer = Player.builder().webName("New Player").positionId("Forward").nowCost(56).minutes(0).totalPoints(28).build();
+
+        playerList.add(newPlayer);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+        // hall is a control test
+        assertTrue(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(newPlayer));
+
+    }
+
+    @Test
+    public void nullMinsFilter_nullNowCost_MaxPriceSet_ExcludesNewPlayer() {
+
+        PlayerFilter playerFilter = new PlayerFilter(null, 6.0);
+
+        Player newPlayer = Player.builder().webName("New Player").positionId("Forward").totalPoints(28).build();
+
+        playerList.add(newPlayer);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+        // hall is a control test
+        assertTrue(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(newPlayer));
+
+    }
 
 
 }

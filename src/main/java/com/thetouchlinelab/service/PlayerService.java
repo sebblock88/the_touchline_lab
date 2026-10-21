@@ -39,9 +39,11 @@ public class PlayerService {
 
     public List<Player> filterPlayers(List<Player> players, PlayerFilter filter) {
 
-        return players.stream()
-                .filter(player -> filter.minMinutes() == null
-                    || player.getMinutes() >= filter.minMinutes())
-                .toList();
+        return players.stream().filter(player -> filter.minMinutes() == null
+                        || (player.getMinutes() != null && player.getMinutes() >= filter.minMinutes()))
+                .filter(player -> filter.maxPrice() == null || (player.getNowCost() != null
+                        && player.getCostInMillions() <= filter.maxPrice()))
+            .toList();
+        }
+
     }
-}
