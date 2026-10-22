@@ -3,7 +3,8 @@ package com.thetouchlinelab.fpl.controller;
 import com.thetouchlinelab.fpl.model.Player;
 import com.thetouchlinelab.fpl.repository.PlayerRepository;
 import com.thetouchlinelab.service.FplApiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.thetouchlinelab.service.PlayerFilter;
+import com.thetouchlinelab.service.PlayerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,29 +17,37 @@ import java.util.List;
 @Controller
 public class PlayerController {
 
-    @Autowired
-    PlayerRepository playerRepository;
-
+    private final PlayerRepository playerRepository;
     private final FplApiService fplApiService;
+    private final PlayerService playerService;
 
-    public PlayerController(FplApiService fplApiService) {
+    public PlayerController(PlayerRepository playerRepository, FplApiService fplApiService, PlayerService playerService) {
+        this.playerRepository = playerRepository;
         this.fplApiService = fplApiService;
+        this.playerService = playerService;
     }
 
     @GetMapping("/players")
     public ModelAndView playersPage(
             @RequestParam(required = false, defaultValue = "ALL") String position,
-            @RequestParam(required = false, defaultValue = "ppmDesc") String sort) {
+            @RequestParam(required = false, defaultValue = "ppmDesc") String sort,
+            @RequestParam(required = false) Integer minMinutes,
+            @RequestParam(required = false) Double maxPrice) {
 
         ModelAndView modelAndView = new ModelAndView("players");
 
-        // 1. Fetch live active players from database
+        // This fetches live active players from database
         List<Player> players = playerRepository.findByIsCurrentTrue();
 
-        // Debug output in terminal to verify list size
-        System.out.println("DEBUG - Total live players fetched from DB: " + players.size());
+        PlayerFilter filter = new PlayerFilter(minMinutes, maxPrice);
 
-        // 2. Filter by position safely
+        players = playerService.filterPlayers(players, filter);
+
+        int before = players.size();
+
+        System.out.println("Before:" + before + " After: " + players.size() );
+
+        // This filters by position safely
         if (position != null && !position.isBlank() && !"ALL".equalsIgnoreCase(position)) {
             players = players.stream()
                     .filter(p -> p.getPositionId() != null && p.getPositionId().equalsIgnoreCase(position))
@@ -55,6 +64,9 @@ public class PlayerController {
         modelAndView.addObject("players", players);
         modelAndView.addObject("selectedPosition", position);
         modelAndView.addObject("selectedSort", sort);
+        modelAndView.addObject("minMinutes", minMinutes);
+        modelAndView.addObject("maxPrice", maxPrice);
+
 
         return modelAndView;
     }
