@@ -23,7 +23,7 @@
 
     <!-- Debug Alert Box if list is empty -->
     <div th:if="${players == null or players.empty}">
-        <p>No player data synced'${players}'</p>
+        <p>No player data synced</p>
         <p>Click the sync button above to populate database</p>
     </div>
 
@@ -32,6 +32,16 @@
         <input type="number" id="minMins" name="minMinutes" th:value="${minMinutes}"><br><br>
         <label for="maxPrice">Max Price:</label>
         <input type="number" step="0.1" id="maxPrice" name="maxPrice" th:value="${maxPrice}"><br><br>
+        <label for="minDefCon">Min DefCon per 90mins:</label>
+        <input type="number" step="0.1" id="minDefCon" name="minDefCon" th:value="${minDefCon}"><br><br>
+        <label for="position">Position:</label>
+        <select id="position" name="position">
+            <option value="">All positions</option>
+            <option value="Goalkeeper" th:selected="${selectedPosition == 'Goalkeeper'}">Goalkeeper</option>
+            <option value="Defender" th:selected="${selectedPosition == 'Defender'}">Defender</option>
+            <option value="Midfielder" th:selected="${selectedPosition == 'Midfielder'}">Midfielder</option>
+            <option value="Forward" th:selected="${selectedPosition == 'Forward'}">Forward</option>
+        </select>
         <button type="submit">Search</button>
     </form>
 
@@ -52,7 +62,7 @@
             <td th:text="${player.team}"></td>
             <td th:text="${player.costInMillions}"></td>
             <td th:text="${player.totalPoints}"></td>
-            <td th:text="${player.pointsPerMillion}"></td>
+            <td th:text="${player.pointsPerMillion()}"></td>
             <td th:text="${player.minutes}"></td>
             <td th:text="${player.defCon}"></td>
         </tr>

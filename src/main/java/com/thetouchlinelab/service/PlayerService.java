@@ -42,6 +42,10 @@ public class PlayerService {
                         || (player.getMinutes() != null && player.getMinutes() >= filter.minMinutes()))
                 .filter(player -> filter.maxPrice() == null || (player.getNowCost() != null
                         && player.getCostInMillions() <= filter.maxPrice()))
+                        .filter(player -> filter.minDefCon() == null
+                        || (player.getDefCon() != null && player.getDefCon() >= filter.minDefCon()))
+                .filter(player -> filter.position() == null
+                        || (player.getPositionId() != null && player.getPositionId().equalsIgnoreCase(filter.position())))
             .toList();
         }
 

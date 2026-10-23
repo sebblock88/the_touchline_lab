@@ -90,7 +90,7 @@ public class PlayerServiceTest {
     @Test
     public void filterPlayers_NullMins_NullMaxPrice_ReturnsAllPlayers() {
 
-        PlayerFilter playerFilter = new PlayerFilter(null, null);
+        PlayerFilter playerFilter = new PlayerFilter(null, null, null, null);
 
         List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
 
@@ -102,7 +102,7 @@ public class PlayerServiceTest {
     @Test
     public void filterPlayers_400Mins_NullMaxPrice_ReturnsFourPlayers() {
 
-        PlayerFilter playerFilter = new PlayerFilter(400, null);
+        PlayerFilter playerFilter = new PlayerFilter(400, null, null, null);
 
         List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
 
@@ -115,7 +115,7 @@ public class PlayerServiceTest {
     @Test
     public void filterPlayers_400Mins_60MaxPrice_ReturnsOnePlayer() {
 
-        PlayerFilter playerFilter = new PlayerFilter(400, 6.0);
+        PlayerFilter playerFilter = new PlayerFilter(400, 6.0, null, null);
 
         List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
 
@@ -128,7 +128,7 @@ public class PlayerServiceTest {
     @Test
     public void nullMinsNewPlayer_400minMins_nullMaxPrice_ExcludesNewPlayer() {
 
-        PlayerFilter playerFilter = new PlayerFilter(400, null);
+        PlayerFilter playerFilter = new PlayerFilter(400, null, null, null);
 
         Player newPlayer = Player.builder().webName("New Player").positionId("Forward").nowCost(56).totalPoints(28).build();
 
@@ -145,7 +145,7 @@ public class PlayerServiceTest {
     @Test
     public void zeroMinsNewPlayer_400minMins_nullMaxPrice_ExcludesNewPlayer() {
 
-        PlayerFilter playerFilter = new PlayerFilter(400, null);
+        PlayerFilter playerFilter = new PlayerFilter(400, null, null,null);
 
         Player newPlayer = Player.builder().webName("New Player").positionId("Forward").nowCost(56).minutes(0).totalPoints(28).build();
 
@@ -162,7 +162,7 @@ public class PlayerServiceTest {
     @Test
     public void nullMinsFilter_nullNowCost_MaxPriceSet_ExcludesNewPlayer() {
 
-        PlayerFilter playerFilter = new PlayerFilter(null, 6.0);
+        PlayerFilter playerFilter = new PlayerFilter(null, 6.0, null, null);
 
         Player newPlayer = Player.builder().webName("New Player").positionId("Forward").totalPoints(28).build();
 
@@ -175,6 +175,8 @@ public class PlayerServiceTest {
         assertFalse(filteredPlayers.contains(newPlayer));
 
     }
+
+
 
 
 }

@@ -32,27 +32,29 @@ public class PlayerController {
             @RequestParam(required = false, defaultValue = "ALL") String position,
             @RequestParam(required = false, defaultValue = "ppmDesc") String sort,
             @RequestParam(required = false) Integer minMinutes,
-            @RequestParam(required = false) Double maxPrice) {
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double minDefCon) {
 
         ModelAndView modelAndView = new ModelAndView("players");
 
         // This fetches live active players from database
         List<Player> players = playerRepository.findByIsCurrentTrue();
 
-        PlayerFilter filter = new PlayerFilter(minMinutes, maxPrice);
+        String positionFilter = (position == null || position.isBlank() || "ALL".equalsIgnoreCase(position)
+                ? null : position);
+
+        PlayerFilter filter = new PlayerFilter(minMinutes, maxPrice, minDefCon, positionFilter);
 
         players = playerService.filterPlayers(players, filter);
 
-        int before = players.size();
 
-        System.out.println("Before:" + before + " After: " + players.size() );
 
-        // This filters by position safely
-        if (position != null && !position.isBlank() && !"ALL".equalsIgnoreCase(position)) {
-            players = players.stream()
-                    .filter(p -> p.getPositionId() != null && p.getPositionId().equalsIgnoreCase(position))
-                    .toList();
-        }
+//        // This filters by position safely
+//        if (position != null && !position.isBlank() && !"ALL".equalsIgnoreCase(position)) {
+//            players = players.stream()
+//                    .filter(p -> p.getPositionId() != null && p.getPositionId().equalsIgnoreCase(position))
+//                    .toList();
+//        }
 
         // 3. Sort
         if ("ppmDesc".equals(sort)) {
@@ -66,6 +68,7 @@ public class PlayerController {
         modelAndView.addObject("selectedSort", sort);
         modelAndView.addObject("minMinutes", minMinutes);
         modelAndView.addObject("maxPrice", maxPrice);
+        modelAndView.addObject("minDefCon", minDefCon);
 
 
         return modelAndView;

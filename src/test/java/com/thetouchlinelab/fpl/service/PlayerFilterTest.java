@@ -19,7 +19,7 @@ public class PlayerFilterTest {
 
         List<Player> playerList = new ArrayList<>();
 
-        PlayerFilter noConditions = new PlayerFilter(null, null);
+        PlayerFilter noConditions = new PlayerFilter(null, null, null, null);
 
         Player raya = Player.builder().webName("Raya").nowCost(61).minutes(450).totalPoints(30).build();
         Player pickford = Player.builder().webName("Pickford").nowCost(55).minutes(290).totalPoints(25).build();
