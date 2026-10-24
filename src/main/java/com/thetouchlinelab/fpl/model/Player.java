@@ -29,6 +29,7 @@ public class Player {
 
     @ToString.Include
     private String webName;
+
     private String team;
 
     @ToString.Include
@@ -50,6 +51,7 @@ public class Player {
     private Integer redCards;
 
     @Column(name = "defensive_contribution_per_90")
+    @ToString.Include
     private Double defCon;
 
     @Column(name = "expected_goal_involvements_per_90")

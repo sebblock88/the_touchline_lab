@@ -5,17 +5,20 @@
     <title>theTouchline - Players</title>
     <link rel="stylesheet" th:href="@{/css/output.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
-<main>
+<body class="bg-white text-slate-900 font-display">
+<main class="mx-auto px-4 py-8">
     <div>
         <div>
-            <h1>Player Statistics</h1>
-            <p>FPL Dashboard Data</p>
+            <h1 class="font-display-700 text-center text-6xl">Player Statistics</h1>
+            <p class="font-display-700 text-center text-xl px-8">FPL Dashboard Data</p>
         </div>
 
-        <form th:action="@{/players/sync}" method="post">
-            <button type="submit">
+        <form class="font-display-700 text-center text-lg" th:action="@{/players/sync}" method="post">
+            <button class="bg-slate-400 hover:bg-slate-700 text-white font-semibold py-2 px-4 border border-gray-400 rounded shadow" type="submit">
                 Sync Latest Player Data
             </button>
         </form>
@@ -42,31 +45,34 @@
             <option value="Midfielder" th:selected="${selectedPosition == 'Midfielder'}">Midfielder</option>
             <option value="Forward" th:selected="${selectedPosition == 'Forward'}">Forward</option>
         </select>
-        <button type="submit">Search</button>
+        <button class="bg-slate-400 hover:bg-slate-700 text-white font-semibold py-2 px-4 border border-gray-400 rounded shadow" type="submit">Search</button>
     </form>
 
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Position</th>
-            <th>Team</th>
-            <th>Price</th>
-            <th>Points</th>
-            <th>Points Per Million</th>
-            <th>Minutes</th>
-            <th>DefCon per 90mins</th>
-        </tr>
-        <tr th:each="player: ${players}">
-            <td th:text="${player.webName}"></td>
-            <td th:text="${player.positionId}"></td>
-            <td th:text="${player.team}"></td>
-            <td th:text="${player.costInMillions}"></td>
-            <td th:text="${player.totalPoints}"></td>
-            <td th:text="${player.pointsPerMillion()}"></td>
-            <td th:text="${player.minutes}"></td>
-            <td th:text="${player.defCon}"></td>
-        </tr>
-
+    <table class="table-auto content-center">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Position</th>
+                <th class="px-4 py-2">Team</th>
+                <th class="px-4 py-2">Price</th>
+                <th class="px-4 py-2">Points</th>
+                <th class="px-4 py-2">Points Per Million</th>
+                <th class="px-4 py-2">Minutes</th>
+                <th class="px-4 py-2">DefCon per 90mins</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr  class="bg-slate-100 hover:bg-slate-700 text-black hover:text-white text-center font-semibold py-2 px-4 border border-gray-400 rounded shadow" th:each="player: ${players}">
+                <td class="border px-4 py-2" th:text="${player.webName}"></td>
+                <td class="border px-4 py-2" th:text="${player.positionId}"></td>
+                <td class="border px-4 py-2" th:text="${player.team}"></td>
+                <td class="border px-4 py-2" th:text="${player.costInMillions}"></td>
+                <td class="border px-4 py-2" th:text="${player.totalPoints}"></td>
+                <td class="border px-4 py-2" th:text="${player.pointsPerMillion()}"></td>
+                <td class="border px-4 py-2" th:text="${player.minutes}"></td>
+                <td class="border px-4 py-2" th:text="${player.defCon}"></td>
+            </tr>
+        </tbody>
     </table>
 
 

@@ -40,13 +40,13 @@ public class PlayerServiceTest {
         playerList = new ArrayList<>();
 
         // Defenders
-        gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).build();
-        bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).build();
-        hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).build();
+        gabriel = Player.builder().webName("Gabriel").positionId("Defender").nowCost(80).totalPoints(25).minutes(450).defCon(12.0).build();
+        bogle = Player.builder().webName("Bogle").positionId("Defender").nowCost(46).totalPoints(42).minutes(365).defCon(7.0).build();
+        hall = Player.builder().webName("Hall").positionId("Defender").nowCost(53).totalPoints(31).minutes(449).defCon(9.0).build();
         // Forwards
-        haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).build();
-        isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).build();
-        kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).build();
+        haaland = Player.builder().webName("Haaland").positionId("Forward").nowCost(156).totalPoints(39).minutes(450).defCon(3.0).build();
+        isak = Player.builder().webName("Isak").positionId("Forward").nowCost(91).totalPoints(33).minutes(413).defCon(2.0).build();
+        kostoulas = Player.builder().webName("Kostoulas").positionId("Forward").nowCost(56).totalPoints(28).minutes(353).defCon(2.0).build();
 
         playerList.add(gabriel);
         playerList.add(bogle);
@@ -88,7 +88,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void filterPlayers_NullMins_NullMaxPrice_ReturnsAllPlayers() {
+    public void filterPlayers_NullMinsFilter_NullMaxPriceFilter_nullMinDefConFilter_nullPositionFilter_ReturnsAllPlayers() {
 
         PlayerFilter playerFilter = new PlayerFilter(null, null, null, null);
 
@@ -100,7 +100,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void filterPlayers_400Mins_NullMaxPrice_ReturnsFourPlayers() {
+    public void filterPlayers_400MinsFilter_NullMaxPriceFilter_nullMinDefConFilter_nullPositionFilter_ReturnsFourPlayers() {
 
         PlayerFilter playerFilter = new PlayerFilter(400, null, null, null);
 
@@ -113,7 +113,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void filterPlayers_400Mins_60MaxPrice_ReturnsOnePlayer() {
+    public void filterPlayers_400MinsFilter_60MaxPriceFilter_nullMinDefConFilter_nullPositionFilter_ReturnsOnePlayer() {
 
         PlayerFilter playerFilter = new PlayerFilter(400, 6.0, null, null);
 
@@ -126,7 +126,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void nullMinsNewPlayer_400minMins_nullMaxPrice_ExcludesNewPlayer() {
+    public void nullMinsNewPlayer_400minMinsFilter_nullMaxPriceFilter_nullMinDefConFilter_nullPositionFilter_ExcludesNewPlayer() {
 
         PlayerFilter playerFilter = new PlayerFilter(400, null, null, null);
 
@@ -143,7 +143,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void zeroMinsNewPlayer_400minMins_nullMaxPrice_ExcludesNewPlayer() {
+    public void zeroMinsNewPlayer_400minMinsFilter_nullMaxPriceFilter_nullMinDefConFilter_nullPositionFilter_ExcludesNewPlayer() {
 
         PlayerFilter playerFilter = new PlayerFilter(400, null, null,null);
 
@@ -160,7 +160,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void nullMinsFilter_nullNowCost_MaxPriceSet_ExcludesNewPlayer() {
+    public void nullMinsFilter_nullNowCostSet_MaxPriceSetFilter_nullMinDefConFilter_nullPositionFilter_ExcludesNewPlayer() {
 
         PlayerFilter playerFilter = new PlayerFilter(null, 6.0, null, null);
 
@@ -175,6 +175,56 @@ public class PlayerServiceTest {
         assertFalse(filteredPlayers.contains(newPlayer));
 
     }
+
+    @Test
+    public void nullMinsFilter_MaxPriceSetFilter_nullMinDefConFilter_nullPositionFilter_returnsOnePlayer() {
+
+        PlayerFilter playerFilter = new PlayerFilter(null, 5.0, null, null);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+
+        assertTrue(filteredPlayers.contains(bogle));
+        assertFalse(filteredPlayers.contains(gabriel));
+        assertFalse(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(isak));
+        assertFalse(filteredPlayers.contains(haaland));
+        assertFalse(filteredPlayers.contains(kostoulas));
+    }
+
+    @Test
+    public void nullMinsFilter_nullMaxPriceFilter_nullMinDefConFilter_DefenderPositionFilter_returnsThreePlayers() {
+
+        PlayerFilter playerFilter = new PlayerFilter(null, null, null, "Defender");
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+
+        assertTrue(filteredPlayers.contains(bogle));
+        assertTrue(filteredPlayers.contains(gabriel));
+        assertTrue(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(isak));
+        assertFalse(filteredPlayers.contains(haaland));
+        assertFalse(filteredPlayers.contains(kostoulas));
+    }
+
+    @Test
+    public void nullMinsFilter_nullMaxPrice_SetMinDefCon_NullPosition_returnsOnePlayer() {
+
+        PlayerFilter playerFilter = new PlayerFilter(null, null, 10.0, null);
+
+        List<Player> filteredPlayers = playerService.filterPlayers(playerList, playerFilter);
+
+
+        assertTrue(filteredPlayers.contains(gabriel));
+        assertFalse(filteredPlayers.contains(bogle));
+        assertFalse(filteredPlayers.contains(hall));
+        assertFalse(filteredPlayers.contains(isak));
+        assertFalse(filteredPlayers.contains(haaland));
+        assertFalse(filteredPlayers.contains(kostoulas));
+    }
+
+
 
 
 
