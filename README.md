@@ -19,6 +19,19 @@ The long term goal is to have a web app that can be a companion to the Fantasy P
 - **Value metric:** points per million, with guards for missing or zero cost and missing points
 - **Per-position ranking** in the service layer (`rankValueByPosition`), because a squad has fixed slots (2 GK, 5 DEF, 5 MID, 3 FWD) and players should be compared with others in the same position
 
+- ## Current WIP Screenshots:
+
+The players page, very simple tailwind styling so far - all players on screen with no filtering
+
+<img width="1882" height="897" alt="image" src="https://github.com/user-attachments/assets/17a8791f-c230-4082-a6b5-d3cf12ec0a9c" />
+
+
+
+
+Filtering of players example:
+
+<img width="1901" height="813" alt="image" src="https://github.com/user-attachments/assets/6b99da82-0055-46c6-875c-6bf02e4cd8a9" />
+
 ## Tech stack
 
 | Area | Technology |
@@ -88,20 +101,6 @@ Flyway applies the database migrations automatically on startup.
 ```bash
 ./gradlew test
 ```
-
-## Current WIP Screenshots:
-
-The players page, very simple tailwind styling so far - all players on screen with no filtering
-
-<img width="1882" height="897" alt="image" src="https://github.com/user-attachments/assets/17a8791f-c230-4082-a6b5-d3cf12ec0a9c" />
-
-
-
-
-Filtering of players example:
-
-<img width="1901" height="813" alt="image" src="https://github.com/user-attachments/assets/6b99da82-0055-46c6-875c-6bf02e4cd8a9" />
-
 
 ## Usage
 
