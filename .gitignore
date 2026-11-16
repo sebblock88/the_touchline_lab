@@ -54,3 +54,6 @@ npm-debug.log
 
 # Tailwind Output cache / temp files
 .clinic/
+node_modules/
+src/main/resources/static/css/output.css
+src/main/resources/application-local.*
